@@ -44,6 +44,7 @@ class CategoryResource extends Resource
                 TextColumn::make('id')->sortable(),
                 TextColumn::make('name')->limit(50)->sortable(),
                 TextColumn::make('slug')->limit(50)
+
             ])
             ->filters([
                 //

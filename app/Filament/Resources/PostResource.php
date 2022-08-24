@@ -12,6 +12,16 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Closure;
+use Illuminate\Support\Str;
+use Filament\Forms\Components\Card;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\BooleanColumn;
 
 class PostResource extends Resource
 {
@@ -23,7 +33,19 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                //
+                 
+        
+                card::make()->schema([
+                    BelongsToSelect::make('category_id')
+                  ->relationship('category', 'name'),
+                    TextInput::make('title') ->reactive()
+                ->afterStateUpdated(function (Closure $set, $state) {
+                    $set('slug', Str::slug($state));
+                })->required(),
+                TextInput::make('slug')->required(),
+                RichEditor::make('content'),
+                Toggle::make('is_published')
+                ])
             ]);
     }
 
@@ -31,7 +53,10 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('id')->sortable(),
+                TextColumn::make('name')->limit(50)->sortable(),
+                TextColumn::make('slug')->limit(50),
+                BooleanColumn::make('is_published')
             ])
             ->filters([
                 //
