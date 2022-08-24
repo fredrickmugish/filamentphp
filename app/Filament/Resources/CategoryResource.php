@@ -12,6 +12,11 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Closure;
+use Illuminate\Support\Str;
+use Filament\Forms\Components\Card;
+use Filament\Tables\Columns\TextColumn;
 
 class CategoryResource extends Resource
 {
@@ -23,7 +28,12 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                //
+                card::make()->schema([TextInput::make('name') ->reactive()
+                ->afterStateUpdated(function (Closure $set, $state) {
+                    $set('slug', Str::slug($state));
+                })->required(),
+                TextInput::make('slug')->required()
+                ])
             ]);
     }
 
@@ -31,7 +41,9 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('id')->sortable(),
+                TextColumn::make('name')->limit(50)->sortable(),
+                TextColumn::make('slug')->limit(50)
             ])
             ->filters([
                 //
