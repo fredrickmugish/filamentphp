@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\PostResource\Widgets\StatsOverview;
 use App\Filament\Resources\TagResource\Pages;
 use App\Filament\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
@@ -22,6 +23,8 @@ use Illuminate\Support\Str;
 class TagResource extends Resource
 {
     protected static ?string $model = Tag::class;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
@@ -65,6 +68,17 @@ class TagResource extends Resource
         ];
     }
     
+
+    public static function getWidgets():array
+    {
+
+return[
+    StatsOverview::class,
+];
+
+    }
+
+
     public static function getPages(): array
     {
         return [

@@ -24,11 +24,16 @@ use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+
+
 
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
+     protected static ?string $recordTitleAttribute = 'title';
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     public static function form(Form $form): Form
@@ -57,13 +62,21 @@ class PostResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->sortable(),
-                TextColumn::make('title')->limit(50)->sortable(),
+                TextColumn::make('title')->limit(50)->sortable()->searchable(),
                 TextColumn::make('slug')->limit(50),
                 BooleanColumn::make('is_published'),
                 SpatieMediaLibraryImageColumn::make('thumbnail')->collection('posts'),
             ])
             ->filters([
-                //
+                Filter::make('published')
+            ->query(fn (Builder $query): Builder => $query->where('is_published', true)),
+
+            Filter::make('Unpublished')
+            ->query(fn (Builder $query): Builder => $query->where('is_published', false)),
+
+            SelectFilter::make('category')->relationship('category', 'name')
+
+            
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
